@@ -1,0 +1,110 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.0"
+    defaultConfig {
+        applicationId "com.example.administrator.testgradle"
+        minSdkVersion 15
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        release{
+            keyAlias "aaaaaa"
+            keyPassword  "aaaaaa"
+            storeFile file('aaaa.jks')
+            storePassword 'aaaaaa'
+        }
+    }
+
+
+
+    //  Every Android app has a unique application ID that looks like a Java package name, such as com.example.myapp.
+    // This ID uniquely identifies your app on the device and in Google Play Store. If you want to upload a new version of your app,
+    // the application ID (and the certificate you sign it with) must be the same as the original APK—if you change the application ID,
+    // Google Play Store treats the APK as a completely different app. So once you publish your app, you should never change the application ID.
+
+    //  it is OK to have different application id for TESTS/DEBUGS...
+
+    buildTypes {
+
+        atest{
+            applicationIdSuffix '.atest';
+            versionNameSuffix '-atest';
+            signingConfig signingConfigs.release;
+        }
+
+        debug{
+            applicationIdSuffix '.debug';
+            versionNameSuffix '-debug';
+        }
+
+        release {
+            minifyEnabled true;
+            shrinkResources true;
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro';
+            signingConfig signingConfigs.release;
+        }
+
+
+    }
+
+
+    productFlavors{
+        mainsource{
+            // each flavor can have properties same as in defaultConfig...
+//            defaultConfig {
+//                applicationId "com.example.administrator.testgradle"
+//                minSdkVersion 15
+//                targetSdkVersion 25
+//                versionCode 1
+//                versionName "1.0"
+//                testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+//            }
+
+
+        }
+
+        flavor1{
+            applicationId "com.example.administrator.testgradle.flavor1"
+        }
+        flavor2{
+            applicationId "hehe.aa"
+        }
+
+
+
+    }
+
+
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+//        exclude group: 'com.android.support', module: 'support-annotations'   // why exclude ??  what is module ??
+    })
+    compile 'com.android.support:appcompat-v7:25.0.0'
+    testCompile 'junit:junit:4.12'
+
+}
+
+
+task printVariantNames(){
+    doLast{
+        android.applicationVariants.all{ variant ->
+            println variant.name
+        }
+    }
+}
+
+task copyApks(type:Copy){
+    from("$buildDir/outputs/apk"){
+        exclude '**/*unsigned.apk','**/*unaligned.apk'
+    }
+    into '../app/apks'
+}

@@ -1,0 +1,50 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.2.3'
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+
+
+
+ext{
+    if(!project.hasProperty('user')){
+        user='user_in_ext'
+    } else{
+        user=project.getProperties().get('user')
+        //   gradlew -Puser=xxxx printTest  --->    project.hasProperty('user') becomes true
+        //   or  specify   user='xxxx'   in gradle.properties
+    }
+}
+
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+task printTest(){
+    println "user=$user"
+}
+
+//----------------------------why this task fail ....page 58
+//  answer  ------> this should be in build.gradle of a particular module,  applicationVariants property is only available for the com.android.application plug-in
+//task printVariantNames(){
+//    doLast{
+//        android.applicationVariants.all{ variant ->
+//            println variant.name
+//        }
+//    }
+//}
